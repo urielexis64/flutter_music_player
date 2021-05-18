@@ -8,13 +8,31 @@ class MusicPlayerPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         body: Column(
-          children: [
-            CustomAppBar(),
-            DiscImageAndDuration(),
-            TitleAndPlay(),
-            Expanded(child: Lyrics())
-          ],
+          children: [MainShadowContainer(), Expanded(child: Lyrics())],
         ),
+      ),
+    );
+  }
+}
+
+class MainShadowContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 50),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
+          boxShadow: [BoxShadow(blurRadius: 12, color: Colors.black26)],
+          gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.center,
+              colors: [Color(0xff33333e), Color(0xff201e28)])),
+      child: Column(
+        children: [
+          CustomAppBar(),
+          DiscImageAndDuration(),
+          TitleAndPlay(),
+        ],
       ),
     );
   }
