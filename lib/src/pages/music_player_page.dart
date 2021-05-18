@@ -49,13 +49,14 @@ class Lyrics extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ListWheelScrollView(
-          itemExtent: 40.0,
+          itemExtent: 45.0,
           physics: BouncingScrollPhysics(),
           diameterRatio: 1.5,
           children: getLyrics()
               .map((e) => Text(
                     e,
-                    style: TextStyle(fontSize: 20, color: Colors.white54),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: Colors.white54),
                   ))
               .toList()),
     );
@@ -89,10 +90,17 @@ class _TitleAndPlayState extends State<TitleAndPlay>
     super.dispose();
   }
 
+  final vete = Audio('assets/Bad Bunny - Vete.mp3',
+      metas: Metas(
+        title: 'Vete',
+        artist: 'Bad Bunny',
+      ));
+
   void open() {
     final audioPlayerModel = context.read<PlayerModel>();
 
-    assetAudioPlayer.open(Audio('assets/Breaking-Benjamin-Far-Away.mp3'));
+    assetAudioPlayer.open(vete);
+
     assetAudioPlayer.currentPosition.listen((duration) {
       audioPlayerModel.current = duration;
     });
@@ -110,11 +118,16 @@ class _TitleAndPlayState extends State<TitleAndPlay>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Far Away',
-                  style: TextStyle(fontSize: 30, color: Colors.white70)),
-              Text('Breaking Benjamin',
-                  style: TextStyle(fontSize: 16, color: Colors.white24)),
+              Text(
+                '${vete.metas.title}',
+                style: TextStyle(fontSize: 30, color: Colors.white70),
+              ),
+              Text(
+                '${vete.metas.artist}',
+                style: TextStyle(fontSize: 16, color: Colors.white24),
+              ),
             ],
           ),
           MaterialButton(
@@ -234,7 +247,7 @@ class DiscImage extends StatelessWidget {
                 infinite: true,
                 animate: false,
                 manualTrigger: true,
-                child: Image(image: AssetImage('assets/aurora.jpg'))),
+                child: Image(image: AssetImage('assets/YHLQMDLG.jpg'))),
             Container(
               width: 20,
               height: 20,
