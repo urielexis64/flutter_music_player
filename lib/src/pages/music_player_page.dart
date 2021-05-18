@@ -1,6 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_music_player/src/helpers/helpers.dart';
+import 'package:flutter_music_player/src/models/player_model.dart';
 import 'package:flutter_music_player/src/widgets/custom_app_bar.dart';
+import 'package:provider/provider.dart';
 
 class MusicPlayerPage extends StatelessWidget {
   @override
@@ -68,9 +71,9 @@ class _TitleAndPlayState extends State<TitleAndPlay>
 
   @override
   void initState() {
-    super.initState();
     playAnimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    super.initState();
   }
 
   @override
@@ -96,11 +99,14 @@ class _TitleAndPlayState extends State<TitleAndPlay>
           ),
           MaterialButton(
             onPressed: () {
+              final playerProvider = context.read<PlayerModel>();
               if (this.isPlaying) {
                 playAnimationController.reverse();
+                playerProvider.controller.stop();
                 isPlaying = false;
               } else {
                 playAnimationController.forward();
+                playerProvider.controller.repeat();
                 isPlaying = true;
               }
             },
@@ -174,6 +180,7 @@ class DiscImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final playerProvider = context.watch<PlayerModel>();
     return Container(
       width: size.width * .6,
       height: size.width * .6,
@@ -188,7 +195,14 @@ class DiscImage extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Image(image: AssetImage('assets/aurora.jpg')),
+            SpinPerfect(
+                duration: Duration(seconds: 10),
+                controller: (animationController) =>
+                    playerProvider.controller = animationController,
+                infinite: true,
+                animate: false,
+                manualTrigger: true,
+                child: Image(image: AssetImage('assets/aurora.jpg'))),
             Container(
               width: 20,
               height: 20,
