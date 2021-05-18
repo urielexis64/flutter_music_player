@@ -1,9 +1,12 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_music_player/src/helpers/helpers.dart';
 import 'package:flutter_music_player/src/models/player_model.dart';
 import 'package:flutter_music_player/src/widgets/custom_app_bar.dart';
 import 'package:provider/provider.dart';
+
+import '../models/player_model.dart';
 
 class MusicPlayerPage extends StatelessWidget {
   @override
@@ -67,19 +70,36 @@ class TitleAndPlay extends StatefulWidget {
 class _TitleAndPlayState extends State<TitleAndPlay>
     with SingleTickerProviderStateMixin {
   bool isPlaying = false;
+  bool firstTime = true;
   AnimationController playAnimationController;
+
+  final assetAudioPlayer = new AssetsAudioPlayer();
 
   @override
   void initState() {
+    super.initState();
     playAnimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    super.initState();
   }
 
   @override
   void dispose() {
     playAnimationController.dispose();
+    assetAudioPlayer.dispose();
     super.dispose();
+  }
+
+  void open() {
+    final audioPlayerModel = context.read<PlayerModel>();
+
+    assetAudioPlayer.open(Audio('assets/Breaking-Benjamin-Far-Away.mp3'));
+    assetAudioPlayer.currentPosition.listen((duration) {
+      audioPlayerModel.current = duration;
+    });
+
+    assetAudioPlayer.current.listen((playingAudio) {
+      audioPlayerModel.songDuration = playingAudio.audio.duration;
+    });
   }
 
   @override
@@ -100,6 +120,7 @@ class _TitleAndPlayState extends State<TitleAndPlay>
           MaterialButton(
             onPressed: () {
               final playerProvider = context.read<PlayerModel>();
+
               if (this.isPlaying) {
                 playAnimationController.reverse();
                 playerProvider.controller.stop();
@@ -108,6 +129,13 @@ class _TitleAndPlayState extends State<TitleAndPlay>
                 playAnimationController.forward();
                 playerProvider.controller.repeat();
                 isPlaying = true;
+              }
+
+              if (firstTime) {
+                open();
+                firstTime = false;
+              } else {
+                assetAudioPlayer.playOrPause();
               }
             },
             child: AnimatedIcon(
@@ -146,10 +174,13 @@ class DiscImageAndDuration extends StatelessWidget {
 class ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final audioPlayerModel = context.watch<PlayerModel>();
+    final percentage = audioPlayerModel.percentage;
     return Container(
       child: Column(
         children: [
-          Text('04:23', style: TextStyle(color: Colors.white38)),
+          Text('${audioPlayerModel.songTotalDuration}',
+              style: TextStyle(color: Colors.white38)),
           SizedBox(height: 10),
           Stack(
             children: [
@@ -162,14 +193,15 @@ class ProgressBar extends StatelessWidget {
                 bottom: 0,
                 child: Container(
                   width: 3,
-                  height: 100,
+                  height: 200 * percentage,
                   color: Colors.white70,
                 ),
               ),
             ],
           ),
           SizedBox(height: 10),
-          Text('00:34', style: TextStyle(color: Colors.white38)),
+          Text('${audioPlayerModel.currentSecond}',
+              style: TextStyle(color: Colors.white38)),
         ],
       ),
     );
