@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_music_player/src/helpers/helpers.dart';
 import 'package:flutter_music_player/src/widgets/custom_app_bar.dart';
 
 class MusicPlayerPage extends StatelessWidget {
@@ -7,8 +8,63 @@ class MusicPlayerPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         body: Column(
-          children: [CustomAppBar(), DiscImageAndDuration()],
+          children: [
+            CustomAppBar(),
+            DiscImageAndDuration(),
+            TitleAndPlay(),
+            Expanded(child: Lyrics())
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class Lyrics extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListWheelScrollView(
+          itemExtent: 40.0,
+          physics: BouncingScrollPhysics(),
+          diameterRatio: 1.5,
+          children: getLyrics()
+              .map((e) => Text(
+                    e,
+                    style: TextStyle(fontSize: 20, color: Colors.white54),
+                  ))
+              .toList()),
+    );
+  }
+}
+
+class TitleAndPlay extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              Text('Far Away',
+                  style: TextStyle(fontSize: 30, color: Colors.white70)),
+              Text('Breaking Benjamin',
+                  style: TextStyle(fontSize: 16, color: Colors.white24)),
+            ],
+          ),
+          MaterialButton(
+            onPressed: () {},
+            child: Icon(
+              Icons.play_arrow,
+              color: Colors.black,
+            ),
+            color: Colors.yellow[700],
+            padding: EdgeInsets.all(16),
+            shape: CircleBorder(),
+          )
+        ],
       ),
     );
   }
@@ -18,9 +74,15 @@ class DiscImageAndDuration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 70),
+      margin: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       child: Row(
-        children: [DiscImage(), ProgressBar()],
+        children: [
+          DiscImage(),
+          SizedBox(
+            width: 25,
+          ),
+          ProgressBar()
+        ],
       ),
     );
   }
